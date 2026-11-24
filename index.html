@@ -256,6 +256,8 @@ body.ready .scroll-cue{opacity:1}
 .svc2:hover .iso *{stroke:var(--gold-2)}
 .svc2 h3{font-family:var(--heading);font-weight:500;font-size:27px;letter-spacing:-.3px;color:#fff;margin-bottom:12px}
 .svc2 p{color:var(--muted-d);font-size:16.5px;line-height:1.75;max-width:440px}
+.svc2 .bar{display:block;width:34px;height:2px;background:var(--gold);margin:6px 0 30px;transition:width .6s var(--ease)}
+.svc2:hover .bar{width:72px}
 @media (max-width:900px){.svc2-grid{grid-template-columns:1fr}.svc2{padding:38px 30px 40px}}
 
 /* scroll reveal */
@@ -369,25 +371,25 @@ body.ready .scroll-cue{opacity:1}
     <div class="svc2-grid">
       <article class="svc2 rv">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <svg class="iso" viewBox="0 0 64 64" aria-hidden="true"><ellipse class="g" cx="22" cy="25" rx="11" ry="6.5"/><ellipse cx="22" cy="25" rx="4" ry="2.4"/><path d="M33 25 L55 37.7"/><path d="M47 33 v6 M51.5 35.6 v5"/></svg>
+        <span class="bar"></span>
         <h3>Software Administration</h3>
         <p>User access, permissions, settings, templates and automations, managed and kept current across every system you use.</p>
       </article>
       <article class="svc2 rv d1">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <svg class="iso" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 13 L54 25.7 L32 38.4 L10 25.7 Z"/><path class="g" d="M22 32.6 L18 44 L30 37.3"/><path d="M24 23 L33 28.2 M29 20.2 L40 26.5"/></svg>
+        <span class="bar"></span>
         <h3>Team Support</h3>
         <p>One place for your staff to send questions and requests, answered by people who know your setup.</p>
       </article>
       <article class="svc2 rv">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <svg class="iso" viewBox="0 0 64 64" aria-hidden="true"><path class="fill" d="M32 34 L52 45.5 L32 57 L12 45.5 Z"/><path class="fill" d="M32 24 L52 35.5 L32 47 L12 35.5 Z"/><path class="fill g" d="M32 14 L52 25.5 L32 37 L12 25.5 Z"/></svg>
+        <span class="bar"></span>
         <h3>Implementation</h3>
         <p>New systems set up properly from the start, configured around how your business works and connected to the tools you already use.</p>
       </article>
       <article class="svc2 rv d1">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <svg class="iso" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="33" rx="23" ry="13.3"/><ellipse cx="32" cy="33" rx="15" ry="8.7" opacity=".5"/><path class="g gf" d="M14 27 L32 31.5 L50 39 L32 34.5 Z"/><path d="M32 33 V16"/><circle cx="32" cy="15" r="2"/></svg>
+        <span class="bar"></span>
         <h3>Consulting</h3>
         <p>Guidance on evaluating new tools, automation and AI opportunities, and getting more out of the software you already pay for.</p>
       </article>
