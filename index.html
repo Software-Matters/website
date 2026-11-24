@@ -13,7 +13,7 @@
   --gold:#C7A77B; --gold-2:#E2CBA5;
   --navy:#1E2A36; --slate:#3A4E63;
   --ink:#121A23; --ink-2:#18222D; --line:#26323F;
-  --paper:#EEF1F4; --paper-2:#EDE9E1;
+  --paper:#F6F4EF; --paper-2:#EDE9E1;
   --text:#1B232C; --muted:#5F6A76; --muted-d:#9EA9B5;
   --serif:"Sora",system-ui,sans-serif;
   --heading:"Fraunces",Georgia,serif;
@@ -248,28 +248,6 @@ body.ready .scroll-cue{opacity:1}
 .who-card.partner .label{color:var(--gold)!important}
 .who-card.partner .deco use{fill:#fff!important}
 
-
-/* ===== Services v2: one panel, hairline cells, cube line marks ===== */
-.services{background:var(--paper)!important}
-.services::before{opacity:.35!important}
-.svc-panel{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #CBD4DD;border-left:1px solid #CBD4DD}
-.cell{position:relative;padding:52px 48px 56px;border-right:1px solid #CBD4DD;border-bottom:1px solid #CBD4DD;overflow:hidden;transition:color .45s var(--ease)}
-.cell::before{content:"";position:absolute;inset:0;background:var(--navy);transform:scaleY(0);transform-origin:bottom;transition:transform .55s var(--ease);z-index:0}
-.cell:hover::before{transform:scaleY(1)}
-.cell > *{position:relative;z-index:1}
-.cell .cm{width:54px;height:auto;margin-bottom:34px;overflow:visible;transition:transform .6s var(--ease)}
-.cell .cm .ln{fill:none;stroke:var(--navy);stroke-width:22;stroke-linejoin:round;transition:stroke .45s}
-.cell .cm .lit{fill:var(--slate);transition:fill .45s}
-.cell:first-child .cm .lit{fill:var(--gold)}
-.cell h3{font-family:var(--heading);font-weight:500;font-size:28px;letter-spacing:-.3px;color:var(--navy);margin-bottom:12px;transition:color .45s}
-.cell p{color:var(--muted);font-size:16.5px;line-height:1.7;max-width:440px;transition:color .45s}
-.cell:hover h3{color:#fff}
-.cell:hover p{color:var(--muted-d)}
-.cell:hover .cm{transform:translateY(-4px) rotate(-4deg)}
-.cell:hover .cm .ln{stroke:var(--gold)}
-.cell:hover .cm .lit{fill:var(--gold)}
-@media (max-width:900px){.svc-panel{grid-template-columns:1fr}.cell{padding:40px 30px 44px}}
-
 /* scroll reveal */
 .rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .rv.in{opacity:1;transform:none}
@@ -378,24 +356,28 @@ body.ready .scroll-cue{opacity:1}
       </div>
       <p class="rv d2">Ongoing care for the systems you already rely on, with support for whatever comes next.</p>
     </div>
-    <div class="svc-panel">
-      <article class="cell rv">
-        <svg class="cm" viewBox="170 125 660 750" aria-hidden="true"><polygon class="lit" points="500,150 805,325 500,500 195,325"/><path class="ln" d="M500 150 L805 325 L805 675 L500 850 L195 675 L195 325 Z M195 325 L500 500 L805 325 M500 500 L500 850"/></svg>
+    <div class="svc-grid">
+      <article class="svc rv">
+        <span class="num">01</span>
+        <div class="ic"><svg viewBox="0 0 56 56"><rect width="56" height="56" rx="14" fill="#1E2A36"/><g fill="none" stroke="#C7A77B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="23" r="5"/><path d="M15 38c1-5 4.6-8 9-8s8 3 9 8"/><path d="M36 20l2 2 4-4"/><path d="M36 30h6"/></g></svg></div>
         <h3>Software Administration</h3>
         <p>User access, permissions, settings, templates and automations, managed and kept current across every system you use.</p>
       </article>
-      <article class="cell rv d1">
-        <svg class="cm" viewBox="170 125 660 750" aria-hidden="true"><polygon class="lit" points="195,325 500,500 500,850 195,675"/><path class="ln" d="M500 150 L805 325 L805 675 L500 850 L195 675 L195 325 Z M195 325 L500 500 L805 325 M500 500 L500 850"/></svg>
+      <article class="svc rv d1">
+        <span class="num">02</span>
+        <div class="ic"><svg viewBox="0 0 56 56"><rect width="56" height="56" rx="14" fill="#1E2A36"/><g fill="none" stroke="#C7A77B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17h26v17H25l-7 6v-6h-3z"/><path d="M21 24h14M21 29h9"/></g></svg></div>
         <h3>Team Support</h3>
         <p>One place for your staff to send questions and requests, answered by people who know your setup.</p>
       </article>
-      <article class="cell rv">
-        <svg class="cm" viewBox="170 125 660 750" aria-hidden="true"><polygon class="lit" points="500,500 805,325 805,675 500,850"/><path class="ln" d="M500 150 L805 325 L805 675 L500 850 L195 675 L195 325 Z M195 325 L500 500 L805 325 M500 500 L500 850"/></svg>
+      <article class="svc rv">
+        <span class="num">03</span>
+        <div class="ic"><svg viewBox="0 0 56 56"><rect width="56" height="56" rx="14" fill="#1E2A36"/><g fill="none" stroke="#C7A77B" stroke-width="2" stroke-linejoin="round"><path d="M28 14l12 7v14l-12 7-12-7V21z"/><path d="M16 21l12 7 12-7M28 28v14"/></g></svg></div>
         <h3>Implementation</h3>
         <p>New systems set up properly from the start, configured around how your business works and connected to the tools you already use.</p>
       </article>
-      <article class="cell rv d1">
-        <svg class="cm" viewBox="170 125 660 750" aria-hidden="true"><path class="ln" d="M500 150 L805 325 L805 675 L500 850 L195 675 L195 325 Z M195 325 L500 500 L805 325 M500 500 L500 850" stroke-dasharray="40 34"/></svg>
+      <article class="svc rv d1">
+        <span class="num">04</span>
+        <div class="ic"><svg viewBox="0 0 56 56"><rect width="56" height="56" rx="14" fill="#1E2A36"/><g fill="none" stroke="#C7A77B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M28 14v5M28 37v5M14 28h5M37 28h5M18 18l3.5 3.5M34.5 34.5L38 38M18 38l3.5-3.5M34.5 21.5L38 18"/><circle cx="28" cy="28" r="4"/></g></svg></div>
         <h3>Consulting</h3>
         <p>Guidance on evaluating new tools, automation and AI opportunities, and getting more out of the software you already pay for.</p>
       </article>
