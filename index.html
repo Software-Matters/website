@@ -355,6 +355,54 @@ h2.rv.in .wipe{transform:none}
 .hero .wrap{will-change:transform,opacity}
 @media (prefers-reduced-motion:reduce){h2.rv .wipe{transform:none}.c1::after{transform:none}}
 
+
+/* ===== Mobile ===== */
+.burger{display:none;width:44px;height:44px;border-radius:50%;border:1px solid #33404E;background:none;cursor:pointer;position:relative;opacity:0;transition:opacity .8s .7s}
+body.ready .burger{opacity:1}
+.burger span{position:absolute;left:13px;right:13px;height:1.5px;background:#fff;transition:transform .35s var(--ease),top .35s var(--ease)}
+.burger span:first-child{top:17px}.burger span:last-child{top:25px}
+.nav.open .burger span:first-child{top:21px;transform:rotate(45deg)}
+.nav.open .burger span:last-child{top:21px;transform:rotate(-45deg)}
+.mmenu{display:none}
+@media (max-width:900px){
+  .wrap{padding:0 22px}
+  .links{display:none!important}
+  .burger{display:block}
+  .nav .wrap{height:68px!important}
+  .nav{background:rgba(18,26,35,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .brand .bs{font-size:9px;letter-spacing:1.3px}
+  .mmenu{display:flex;flex-direction:column;gap:4px;padding:8px 22px 26px;max-height:0;overflow:hidden;opacity:0;transition:max-height .5s var(--ease),opacity .4s,padding .4s}
+  .nav.open .mmenu{max-height:360px;opacity:1}
+  .nav:not(.open) .mmenu{padding-top:0;padding-bottom:0}
+  .mmenu a{color:#fff;font-family:var(--heading);font-size:26px;letter-spacing:-.4px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .mmenu a.btn{font-family:var(--sans);font-size:15px;justify-content:center;margin-top:18px;border-bottom:none;color:var(--ink);padding:15px}
+  section{scroll-margin-top:68px}
+  /* hero */
+  .hero{padding:104px 0 64px;min-height:auto}
+  .cube-stage{max-width:190px!important;margin:0 auto 8px!important}
+  .cube-ring{display:none}
+  .hero h1{font-size:40px!important;letter-spacing:-1.4px!important}
+  .hero p{font-size:17px;margin-top:22px}
+  .hero .actions{margin-top:30px;gap:10px}
+  .hero .actions .btn{flex:1;justify-content:center;padding:14px 16px}
+  /* sections */
+  .services,.how,.who,.contact{padding:84px 0 88px!important}
+  .sec-head{margin-bottom:36px!important;gap:14px!important}
+  .sec-head h2,.contact h2{font-size:38px!important}
+  .sec-head p{font-size:16.5px}
+  .svc2{padding:32px 26px 34px!important;--cut:34px}
+  .svc2 h3{font-size:24px}
+  .svc2 p,.c1 p,.who-card p{font-size:16px}
+  .c1 > div{padding:30px 0 28px!important}
+  .c1 h3{font-size:28px;margin:12px 0 10px}
+  .who-card{padding:32px 26px 34px!important}
+  .who-card h3{font-size:28px!important}
+  .who-card .deco{width:150px;right:-30px;bottom:-40px}
+  .ct-form{padding:26px 22px!important}
+  .ct-item{font-size:16px}
+  .foot .wrap{flex-direction:column;gap:6px}
+}
+
 /* scroll reveal */
 .rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .rv.in{opacity:1;transform:none}
@@ -420,6 +468,13 @@ h2.rv.in .wipe{transform:none}
       <a href="#who">Who It's For</a>
             <a class="btn btn-gold" href="#contact">Get in touch</a>
     </nav>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+  <div class="mmenu" id="mmenu">
+    <a href="#services">Services</a>
+    <a href="#how">Process</a>
+    <a href="#who">Who It's For</a>
+    <a class="btn btn-gold" href="#contact">Get in touch <span class="arr">→</span></a>
   </div>
 </header>
 
@@ -631,6 +686,7 @@ h2.rv.in .wipe{transform:none}
   function drawEdges(){
     document.querySelectorAll('.svc2').forEach(function(c){
       var w=c.offsetWidth,h=c.offsetHeight,cut=46,cy=cut*.577;
+      cut=parseFloat(getComputedStyle(c).getPropertyValue('--cut'))||46;cy=cut*.577;
       var d='M1 1 H'+(w-cut)+' L'+(w-1)+' '+cy+' V'+(h-1)+' H1 Z';
       var svg=c.querySelector('.edge');
       svg.setAttribute('viewBox','0 0 '+w+' '+h);
@@ -641,7 +697,8 @@ h2.rv.in .wipe{transform:none}
       c.onmouseleave=function(){t.style.strokeDashoffset=L};
     });
   }
-  drawEdges(); window.addEventListener('resize',drawEdges);
+  drawEdges(); window.addEventListener('resize',drawEdges); window.addEventListener('load',drawEdges);
+  if('ResizeObserver' in window){var ro=new ResizeObserver(function(){drawEdges()});document.querySelectorAll('.svc2').forEach(function(c){ro.observe(c)});}
 
 
   // Contact form: posts to data-endpoint when set; shows confirmation on success
@@ -681,6 +738,14 @@ h2.rv.in .wipe{transform:none}
     upd();
     var c1=document.querySelector('.c1');
     if(c1&&'IntersectionObserver' in window){new IntersectionObserver(function(es){c1.classList.toggle('in',es[0].isIntersecting)},{threshold:0,rootMargin:'0px 0px -80px 0px'}).observe(c1);}
+  })();
+
+
+  // Mobile menu
+  (function(){
+    var nav=document.getElementById('nav'),bt=document.getElementById('burger');
+    bt.addEventListener('click',function(){var o=nav.classList.toggle('open');bt.setAttribute('aria-expanded',o)});
+    document.querySelectorAll('#mmenu a').forEach(function(a){a.addEventListener('click',function(){nav.classList.remove('open');bt.setAttribute('aria-expanded','false')})});
   })();
 
   var els=document.querySelectorAll('.rv');
