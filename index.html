@@ -256,6 +256,15 @@ body.ready .scroll-cue{opacity:1}
 .svc2:hover .iso *{stroke:var(--gold-2)}
 .svc2 h3{font-family:var(--heading);font-weight:500;font-size:27px;letter-spacing:-.3px;color:#fff;margin-bottom:12px}
 .svc2 p{color:var(--muted-d);font-size:16.5px;line-height:1.75;max-width:440px}
+.svc2 .ico{width:52px;height:52px;margin-bottom:30px;overflow:visible;transition:transform .6s var(--ease)}
+.svc2 .ico .s{fill:#3A4E63}.svc2 .ico .s2{fill:#4E647B}
+.svc2 .ico .g{fill:var(--gold);transition:fill .4s,transform .6s var(--ease)}
+.svc2 .ico .dk{fill:#1B2633}
+.svc2 .ico .k{fill:none;stroke:#1B2633;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.svc2 .ico .lift{transform-box:fill-box;transform-origin:center}
+.svc2:hover .ico{transform:translateY(-4px)}
+.svc2:hover .ico .g{fill:var(--gold-2)}
+.svc2:hover .ico .lift{transform:translate(0,3px) rotate(8deg)}
 .svc2 .bar{display:block;width:34px;height:2px;background:var(--gold);margin:6px 0 30px;transition:width .6s var(--ease)}
 .svc2:hover .bar{width:72px}
 @media (max-width:900px){.svc2-grid{grid-template-columns:1fr}.svc2{padding:38px 30px 40px}}
@@ -371,25 +380,25 @@ body.ready .scroll-cue{opacity:1}
     <div class="svc2-grid">
       <article class="svc2 rv">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <span class="bar"></span>
+        <svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><circle cx="18" cy="15" r="7.5" class="s"/><path class="s" d="M4 40c0-8.5 6.3-14 14-14s14 5.5 14 14z"/><circle cx="35" cy="33" r="9.5" class="g"/><path class="k" d="M30.5 33.2l3 3 6-6"/></svg>
         <h3>Software Administration</h3>
         <p>User access, permissions, settings, templates and automations, managed and kept current across every system you use.</p>
       </article>
       <article class="svc2 rv d1">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <span class="bar"></span>
+        <svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><path class="s" d="M10 6h20a6 6 0 016 6v10a6 6 0 01-6 6H17l-7 6v-6a6 6 0 01-6-6V12a6 6 0 016-6z"/><path class="g" d="M23 19h17a5 5 0 015 5v8a5 5 0 01-5 5v5l-6-5H23a5 5 0 01-5-5v-8a5 5 0 015-5z"/><circle class="dk" cx="26.5" cy="28" r="1.8"/><circle class="dk" cx="31.5" cy="28" r="1.8"/><circle class="dk" cx="36.5" cy="28" r="1.8"/></svg>
         <h3>Team Support</h3>
         <p>One place for your staff to send questions and requests, answered by people who know your setup.</p>
       </article>
       <article class="svc2 rv">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <span class="bar"></span>
+        <svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><rect class="s" x="5" y="26" width="17" height="17" rx="2.5"/><rect class="s2" x="25" y="26" width="17" height="17" rx="2.5"/><rect class="g lift" x="15" y="5" width="17" height="17" rx="2.5"/></svg>
         <h3>Implementation</h3>
         <p>New systems set up properly from the start, configured around how your business works and connected to the tools you already use.</p>
       </article>
       <article class="svc2 rv d1">
         <svg class="edge" aria-hidden="true"><path/></svg>
-        <span class="bar"></span>
+        <svg class="ico" viewBox="0 0 48 48" aria-hidden="true"><path class="g" d="M24 5a13 13 0 017.6 23.6c-1.5 1.1-2.4 2.6-2.4 4.4H18.8c0-1.8-.9-3.3-2.4-4.4A13 13 0 0124 5z"/><rect class="s" x="18.5" y="35" width="11" height="3.5" rx="1.5"/><rect class="s" x="20" y="40.5" width="8" height="3" rx="1.5"/><path class="k" d="M24 33v-8M21 22.5l3 2.5 3-2.5" style="stroke-width:1.8"/></svg>
         <h3>Consulting</h3>
         <p>Guidance on evaluating new tools, automation and AI opportunities, and getting more out of the software you already pay for.</p>
       </article>
