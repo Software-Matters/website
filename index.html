@@ -620,7 +620,7 @@ h2.rv.in .wipe{transform:none}
   ['contact'].forEach(function(id){
     var el=document.getElementById(id);
     if(!('IntersectionObserver' in window)){el.classList.add('in');return;}
-    var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){el.classList.add('in');o.disconnect();}})},{threshold:.35});
+    var o=new IntersectionObserver(function(es){es.forEach(function(e){el.classList.toggle('in',e.isIntersecting);})},{threshold:0,rootMargin:'0px 0px -80px 0px'});
     o.observe(el);
   });
 
@@ -680,14 +680,14 @@ h2.rv.in .wipe{transform:none}
     window.addEventListener('scroll',function(){if(!tick){requestAnimationFrame(upd);tick=true}},{passive:true});
     upd();
     var c1=document.querySelector('.c1');
-    if(c1&&'IntersectionObserver' in window){var o=new IntersectionObserver(function(es){if(es[0].isIntersecting){c1.classList.add('in');o.disconnect()}},{threshold:.2});o.observe(c1);}
+    if(c1&&'IntersectionObserver' in window){new IntersectionObserver(function(es){c1.classList.toggle('in',es[0].isIntersecting)},{threshold:0,rootMargin:'0px 0px -80px 0px'}).observe(c1);}
   })();
 
   var els=document.querySelectorAll('.rv');
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(ents){
-      ents.forEach(function(en){ if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);} });
-    },{threshold:.15,rootMargin:'0px 0px -60px 0px'});
+      ents.forEach(function(en){ en.target.classList.toggle('in',en.isIntersecting); });
+    },{threshold:0,rootMargin:'0px 0px -60px 0px'});
     els.forEach(function(el){io.observe(el)});
   } else { els.forEach(function(el){el.classList.add('in')}); }
 })();
