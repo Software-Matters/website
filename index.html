@@ -269,6 +269,19 @@ body.ready .scroll-cue{opacity:1}
 .svc2:hover .bar{width:72px}
 @media (max-width:900px){.svc2-grid{grid-template-columns:1fr}.svc2{padding:38px 30px 40px}}
 
+
+/* ===== Process: columns under one hairline ===== */
+.how .sec-head{margin-bottom:60px}
+.c1{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.c1 > div{position:relative;padding:40px 40px 10px 0}
+.c1 > div + div{padding-left:40px;border-left:1px solid var(--line)}
+.c1 > div::before{content:"";position:absolute;top:-1px;left:0;right:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease)}
+.c1 > div:hover::before{transform:scaleX(1)}
+.c1 .n{font-size:13px;font-weight:600;letter-spacing:2px;color:var(--gold)}
+.c1 h3{font-family:var(--heading);font-weight:400;font-size:32px;letter-spacing:-.6px;margin:18px 0 14px;line-height:1.1;color:#fff}
+.c1 p{color:var(--muted-d);font-size:16.5px;line-height:1.75}
+@media (max-width:900px){.c1{grid-template-columns:1fr}.c1>div+div{border-left:none;padding-left:0;border-top:1px solid var(--line)}.c1>div{padding-right:0}}
+
 /* scroll reveal */
 .rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .rv.in{opacity:1;transform:none}
@@ -414,23 +427,10 @@ body.ready .scroll-cue{opacity:1}
         <h2 class="rv d1">How we <em>work</em></h2>
       </div>
     </div>
-    <div class="steps" id="steps">
-      <div class="steps-line"><i></i></div>
-      <div class="step rv">
-        <div class="node">01</div>
-        <h3>Discovery</h3>
-        <p>We start by learning your systems: how each one is set up, who uses it, and where things could run better.</p>
-      </div>
-      <div class="step rv d1">
-        <div class="node">02</div>
-        <h3>Onboarding</h3>
-        <p>We set up secure administrative access and give your team a single place to send requests and questions.</p>
-      </div>
-      <div class="step rv d2">
-        <div class="node">03</div>
-        <h3>Ongoing care</h3>
-        <p>From there, we handle the day-to-day: requests, changes and issues. We keep each system documented and recommend improvements along the way.</p>
-      </div>
+    <div class="c1">
+      <div class="rv"><span class="n">STEP 01</span><h3>Discovery</h3><p>We start by learning your systems: how each one is set up, who uses it, and where things could run better.</p></div>
+      <div class="rv d1"><span class="n">STEP 02</span><h3>Onboarding</h3><p>We set up secure administrative access and give your team a single place to send requests and questions.</p></div>
+      <div class="rv d2"><span class="n">STEP 03</span><h3>Ongoing care</h3><p>From there, we handle the day-to-day: requests, changes and issues. We keep each system documented and recommend improvements along the way.</p></div>
     </div>
   </div>
 </section>
@@ -512,7 +512,7 @@ body.ready .scroll-cue{opacity:1}
     });
   }
 
-  ['steps','contact'].forEach(function(id){
+  ['contact'].forEach(function(id){
     var el=document.getElementById(id);
     if(!('IntersectionObserver' in window)){el.classList.add('in');return;}
     var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){el.classList.add('in');o.disconnect();}})},{threshold:.35});
