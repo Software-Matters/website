@@ -333,6 +333,28 @@ body.ready .scroll-cue{opacity:1}
 .ct-again:hover{border-color:var(--gold)}
 @media (max-width:900px){.ct-grid{grid-template-columns:1fr;gap:50px}.ct-form{padding:28px}.ct-form .row2{grid-template-columns:1fr}}
 
+
+/* ===== Scroll effects ===== */
+/* 1. headings wipe up */
+h2.rv{opacity:1!important;transform:none!important;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+h2.rv .wipe{display:inline-block;transform:translateY(110%);transition:transform 1.1s var(--ease)}
+h2.rv.d1 .wipe{transition-delay:.1s}
+h2.rv.in .wipe{transform:none}
+/* 2. eyebrow lines draw in */
+.eyebrow.rv::before{width:0;transition:width .9s var(--ease) .25s}
+.eyebrow.rv.in::before{width:28px}
+/* 3. process hairline draws across */
+.c1{border-top:none!important;position:relative}
+.c1::after{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line);transform:scaleX(0);transform-origin:left;transition:transform 1.4s var(--ease)}
+.c1.in::after{transform:scaleX(1)}
+.c1 > .rv{transition-delay:.35s}.c1 > .rv.d1{transition-delay:.55s}.c1 > .rv.d2{transition-delay:.75s}
+/* 5. progress bar */
+.scroll-prog{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
+.scroll-prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-2));transform:scaleX(0);transform-origin:left}
+/* 4. hero eases away */
+.hero .wrap{will-change:transform,opacity}
+@media (prefers-reduced-motion:reduce){h2.rv .wipe{transform:none}.c1::after{transform:none}}
+
 /* scroll reveal */
 .rv{opacity:0;transform:translateY(40px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .rv.in{opacity:1;transform:none}
@@ -385,6 +407,7 @@ body.ready .scroll-cue{opacity:1}
   <button class="skip" onclick="finishIntro()">Skip</button>
 </div>
 
+<div class="scroll-prog" aria-hidden="true"><i id="scrollProg"></i></div>
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="brand" href="#top">
@@ -437,7 +460,7 @@ body.ready .scroll-cue{opacity:1}
     <div class="sec-head">
       <div>
         <span class="eyebrow rv">Services</span>
-        <h2 class="rv d1">What we <em>handle</em></h2>
+        <h2 class="rv d1"><span class="wipe">What we <em>handle</em></span></h2>
       </div>
       <p class="rv d2">Ongoing care for the systems you already rely on, with support for whatever comes next.</p>
     </div>
@@ -475,7 +498,7 @@ body.ready .scroll-cue{opacity:1}
     <div class="sec-head">
       <div>
         <span class="eyebrow rv">Process</span>
-        <h2 class="rv d1">How we <em>work</em></h2>
+        <h2 class="rv d1"><span class="wipe">How we <em>work</em></span></h2>
       </div>
     </div>
     <div class="c1">
@@ -490,7 +513,7 @@ body.ready .scroll-cue{opacity:1}
     <div class="sec-head">
       <div>
         <span class="eyebrow rv">Clients &amp; partners</span>
-        <h2 class="rv d1">Who we <em>work with</em></h2>
+        <h2 class="rv d1"><span class="wipe">Who we <em>work with</em></span></h2>
       </div>
     </div>
     <div class="who-grid">
@@ -515,7 +538,7 @@ body.ready .scroll-cue{opacity:1}
   <div class="wrap ct-grid">
     <div class="ct-left">
       <span class="eyebrow rv">Contact</span>
-      <h2 class="rv d1">Let's <em>talk</em></h2>
+      <h2 class="rv d1"><span class="wipe">Let's <em>talk</em></span></h2>
       <p class="ct-intro rv d2">Whether you're managing a handful of systems or dozens, we'd be glad to learn how your business works and where we can help.</p>
       <div class="ct-list rv d2">
         <a class="ct-item" href="mailto:contact@swmatters.com">
@@ -637,6 +660,27 @@ body.ready .scroll-cue{opacity:1}
         .catch(function(){ st.textContent='Something went wrong. Please email contact@swmatters.com directly.'; })
         .finally(function(){ btn.disabled=false; });
     });
+  })();
+
+
+  // Scroll: hero eases away, progress bar, process line
+  (function(){
+    var hw=document.querySelector('.hero .wrap'), bar=document.getElementById('scrollProg'), tick=false;
+    var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function upd(){
+      var y=window.scrollY,h=window.innerHeight,max=document.documentElement.scrollHeight-h;
+      bar.style.transform='scaleX('+(max>0?y/max:0)+')';
+      if(!rm && document.body.classList.contains('ready')){
+        var p=Math.min(y/(h*.85),1);
+        hw.style.opacity=String(1-p*.9);
+        hw.style.transform='translateY('+(y*.22)+'px)';
+      }
+      tick=false;
+    }
+    window.addEventListener('scroll',function(){if(!tick){requestAnimationFrame(upd);tick=true}},{passive:true});
+    upd();
+    var c1=document.querySelector('.c1');
+    if(c1&&'IntersectionObserver' in window){var o=new IntersectionObserver(function(es){if(es[0].isIntersecting){c1.classList.add('in');o.disconnect()}},{threshold:.2});o.observe(c1);}
   })();
 
   var els=document.querySelectorAll('.rv');
