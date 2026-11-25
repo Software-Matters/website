@@ -31,7 +31,7 @@ When someone submits the contact form:
 - **To connect it:** set `data-endpoint` (and `action`) to the handler URL, e.g. `/api/contact`.
 
 ## Suggested implementation (Claude Code may choose otherwise)
-The owner works in Python, Flask and Docker, so prefer that stack.
+The owner works in Python and Flask, and deploys with **systemd + nginx**. Keep it simple: no Docker.
 
 - **A small Flask app** that does two things:
   - Serves `index.html` as a static file, or let the web server serve it (see below).
@@ -50,8 +50,8 @@ The owner works in Python, Flask and Docker, so prefer that stack.
     6. Return `{"ok": true}` with status 200 if at least the email went out.
        - Log the ClickUp error, but don't fail the visitor over it.
        - If the email fails, return a 5xx status, so the page shows its fallback message.
-- **Basic rate limiting** on `/api/contact`, e.g. a few requests per minute per IP, through Flask-Limiter or the web server.
-- **Configuration in a `.env` file** that is not committed. Read it with `python-dotenv` or Docker `env_file`:
+- **Basic rate limiting** on `/api/contact`, e.g. a few requests per minute per IP. nginx `limit_req` is the simplest way.
+- **Configuration in a `.env` file** that is not committed. Read it with `python-dotenv`, or the systemd unit's `EnvironmentFile=`:
   - `SMTP_HOST`
   - `SMTP_PORT`
   - `SMTP_USER`
@@ -63,18 +63,31 @@ The owner works in Python, Flask and Docker, so prefer that stack.
   - `CLICKUP_LIST_ID`
 - In `index.html`, set the form's `data-endpoint` and `action` to `/api/contact`.
 
-## Deploy on the VPS
-1. Package the app with Docker:
-   - A `Dockerfile` that runs the Flask app with **gunicorn**.
-   - A `docker-compose.yml` that loads `env_file: .env`.
-2. Put a reverse proxy in front: **Caddy** (automatic HTTPS) or Nginx with Certbot.
-   - Serve `index.html` as static files.
-   - Proxy `/api/*` to gunicorn.
-3. DNS: point the `A` record for `swmatters.com` and `www` at the VPS IP. Redirect `www` to the bare domain.
-4. Test with a real submission. Check that the email and the ClickUp task both arrive, and that the confirmation panel shows.
-5. Also check email deliverability:
+## Deploy on the VPS (systemd + nginx)
+1. Put the app in its own directory, e.g. `/opt/swmatters`:
+   - `index.html`
+   - `app.py`
+   - `requirements.txt`
+   - `.env`
+   - a Python venv
+2. Run it with **gunicorn** under a **systemd** service:
+   - `swmatters.service`, with `EnvironmentFile=/opt/swmatters/.env` and `Restart=always`.
+   - Bind gunicorn to `127.0.0.1:8000`.
+3. **nginx** server block for `swmatters.com` and `www.swmatters.com`:
+   - Serve `index.html` (static) from the site root.
+   - `location /api/` → `proxy_pass http://127.0.0.1:8000;`
+   - Add `limit_req` on `/api/contact`.
+   - Redirect `www` to the bare domain.
+   - Get HTTPS with **Certbot** (`certbot --nginx`).
+4. DNS: point the `A` record for `swmatters.com` and `www` at the VPS IP.
+5. Test with a real submission. Check that the email and the ClickUp task both arrive, and that the confirmation panel shows.
+6. Also check email deliverability:
    - SPF and DKIM must be set for whichever domain or provider sends the SMTP mail.
    - Otherwise these messages may land in spam.
+7. Provide example config files in the repo:
+   - `deploy/swmatters.service`
+   - `deploy/nginx.conf`
+   - `.env.example`
 
 ### Alternative with no code
 Point `data-endpoint` at a Make or Zapier webhook. The scenario then sends the email and creates the ClickUp task. The webhook must return 2xx.
