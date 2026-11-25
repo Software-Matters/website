@@ -3,7 +3,8 @@
 ## Context
 - Site: a single static page, `index.html` (self-contained HTML/CSS/JS, no build step).
 - Company: Software Matters (swmatters.com), software administration & support.
-- Hosting plan: **Cloudflare Pages** on `swmatters.com`.
+- Hosting plan: the owner's own **VPS**, serving `swmatters.com`.
+- Email sending: **SMTP** (the owner supplies host, port, username and password).
 - Version history is in this folder's git repo (`git log --oneline`).
 
 ## Goal
@@ -30,33 +31,53 @@ When someone submits the contact form:
 - **To connect it:** set `data-endpoint` (and `action`) to the handler URL, e.g. `/api/contact`.
 
 ## Suggested implementation (Claude Code may choose otherwise)
-- **Cloudflare Pages Function** at `functions/api/contact.js` (POST only):
-  1. Parse `request.formData()`.
-  2. Drop the submission if the honeypot is filled.
-  3. Validate the required fields and the email format.
-  4. Send the email via an email API, e.g. **Resend** (verify the `swmatters.com` domain there).
-     - Set Reply-To to the submitter's email.
-  5. Create the ClickUp task via `POST https://api.clickup.com/api/v2/list/{LIST_ID}/task`:
-     - Header: `Authorization: {CLICKUP_TOKEN}`
-     - Task name: `Website inquiry: {name} ({company})`
-     - Description: all fields plus a timestamp.
-  6. Return JSON `{ok:true}` with status 200. On failure, return a non-2xx status.
-- Store secrets as Cloudflare Pages environment variables, never in the HTML:
-  - `RESEND_API_KEY`
+The owner works in Python, Flask and Docker, so prefer that stack.
+
+- **A small Flask app** that does two things:
+  - Serves `index.html` as a static file, or let the web server serve it (see below).
+  - Handles `POST /api/contact`:
+    1. Read the form fields.
+    2. If the honeypot is filled, return 200 without doing anything.
+    3. Validate the required fields and the email format. Cap the length of each field.
+    4. **Send the email over SMTP** (Python `smtplib` with STARTTLS or SSL).
+       - To `MAIL_TO`, from `MAIL_FROM`.
+       - Set Reply-To to the submitter's email.
+       - Subject: `Website inquiry: {name} ({company})`.
+    5. **Create the ClickUp task** via `POST https://api.clickup.com/api/v2/list/{CLICKUP_LIST_ID}/task`:
+       - Header: `Authorization: {CLICKUP_TOKEN}`
+       - Task name: `Website inquiry: {name} ({company})`
+       - Description: all fields plus a timestamp.
+    6. Return `{"ok": true}` with status 200 if at least the email went out.
+       - Log the ClickUp error, but don't fail the visitor over it.
+       - If the email fails, return a 5xx status, so the page shows its fallback message.
+- **Basic rate limiting** on `/api/contact`, e.g. a few requests per minute per IP, through Flask-Limiter or the web server.
+- **Configuration in a `.env` file** that is not committed. Read it with `python-dotenv` or Docker `env_file`:
+  - `SMTP_HOST`
+  - `SMTP_PORT`
+  - `SMTP_USER`
+  - `SMTP_PASS`
+  - `SMTP_TLS` (starttls or ssl)
+  - `MAIL_TO` = `contact@swmatters.com`
+  - `MAIL_FROM`
   - `CLICKUP_TOKEN`
   - `CLICKUP_LIST_ID`
-  - `MAIL_TO` = `contact@swmatters.com`
-  - `MAIL_FROM` (e.g. `website@swmatters.com`)
-- Optional: add Cloudflare Turnstile for extra spam protection.
+- In `index.html`, set the form's `data-endpoint` and `action` to `/api/contact`.
+
+## Deploy on the VPS
+1. Package the app with Docker:
+   - A `Dockerfile` that runs the Flask app with **gunicorn**.
+   - A `docker-compose.yml` that loads `env_file: .env`.
+2. Put a reverse proxy in front: **Caddy** (automatic HTTPS) or Nginx with Certbot.
+   - Serve `index.html` as static files.
+   - Proxy `/api/*` to gunicorn.
+3. DNS: point the `A` record for `swmatters.com` and `www` at the VPS IP. Redirect `www` to the bare domain.
+4. Test with a real submission. Check that the email and the ClickUp task both arrive, and that the confirmation panel shows.
+5. Also check email deliverability:
+   - SPF and DKIM must be set for whichever domain or provider sends the SMTP mail.
+   - Otherwise these messages may land in spam.
 
 ### Alternative with no code
 Point `data-endpoint` at a Make or Zapier webhook. The scenario then sends the email and creates the ClickUp task. The webhook must return 2xx.
-
-## Deploy steps
-1. Put `index.html` and the `functions/` folder in one repo or folder.
-2. Create a Cloudflare Pages project, deploy it, then add the environment variables.
-3. Add the custom domain `swmatters.com`.
-4. Test with a real submission. Check that the email and the ClickUp task both arrive, and that the confirmation panel shows.
 
 ## Don't change
 The design, copy, fonts, animations and layout are approved. Only touch the form `data-endpoint`/`action` and add the backend.
