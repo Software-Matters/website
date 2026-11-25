@@ -1,6 +1,9 @@
 """Software Matters site backend: handles the contact form.
 
-POST /api/contact  -> emails the submission (SMTP) and creates a ClickUp task.
+POST /api/contact  -> qualifies the submission (OpenAI), then:
+                        lead         -> email + ClickUp task
+                        solicitation -> email only, first time; similar repeats are dropped
+                        spam         -> email only, first time; similar repeats are dropped
 GET  /             -> serves index.html (for local dev; nginx serves it in production).
 """
 import logging
@@ -17,6 +20,8 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from qualify import SeenMemory, classify
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
@@ -26,6 +31,8 @@ app.config["MAX_CONTENT_LENGTH"] = 64 * 1024  # whole request body cap
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("swmatters")
+
+seen_memory = SeenMemory(os.environ.get("DB_PATH") or os.path.join(BASE_DIR, "data", "submissions.db"))
 
 # Per-field length caps
 LIMITS = {
@@ -55,8 +62,9 @@ def subject_for(data):
     return f"Website inquiry: {name} ({company})" if company else f"Website inquiry: {name}"
 
 
-def body_for(data, timestamp):
+def body_for(data, timestamp, category, reason):
     return (
+        f"Classification: {category} ({reason})\n\n"
         f"Name:    {data['name']}\n"
         f"Company: {data['company'] or '-'}\n"
         f"Email:   {data['email']}\n"
@@ -130,9 +138,21 @@ def contact():
     if errors:
         return jsonify(ok=False, errors=errors), 400
 
+    # Repeat of spam/solicitation we've already emailed: drop silently
+    # (checked before classifying, so repeats cost nothing).
+    repeat = seen_memory.match(data)
+    if repeat:
+        log.info("Repeat %s from %s dropped", repeat, request.remote_addr)
+        return jsonify(ok=True)
+
+    category, reason = classify(data)
+    log.info("Classified as %s: %s", category, reason)
+
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     subject = subject_for(data)
-    body = body_for(data, timestamp)
+    if category != "lead":
+        subject = f"[{category.capitalize()}] {subject}"
+    body = body_for(data, timestamp, category, reason)
 
     try:
         send_email(data, subject, body)
@@ -140,10 +160,13 @@ def contact():
         log.exception("Email send failed")
         return jsonify(ok=False, error="email failed"), 502
 
-    try:
-        create_clickup_task(subject, body)
-    except Exception:
-        log.exception("ClickUp task creation failed (email was sent)")
+    if category in ("spam", "solicitation"):
+        seen_memory.remember(data, category)  # only after the email went out, so a failed send can retry
+    else:
+        try:
+            create_clickup_task(subject, body)
+        except Exception:
+            log.exception("ClickUp task creation failed (email was sent)")
 
     return jsonify(ok=True)
 
