@@ -6,9 +6,9 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/opt/swmatters
-EnvironmentFile=/opt/swmatters/.env
-ExecStart=/opt/swmatters/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 --access-logfile - app:app
+WorkingDirectory=/var/www/swmatters
+EnvironmentFile=/var/www/swmatters/.env
+ExecStart=/var/www/swmatters/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 --access-logfile - app:app
 Restart=always
 RestartSec=3
 NoNewPrivileges=true

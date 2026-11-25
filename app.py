@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from email_template import html_for
 from qualify import SeenMemory, classify
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -76,7 +77,7 @@ def body_for(data, timestamp, category, reason):
     )
 
 
-def send_email(data, subject, body):
+def send_email(data, subject, body, html=None):
     msg = EmailMessage()
     msg["Subject"] = subject
     msg["From"] = env("MAIL_FROM")
@@ -86,6 +87,8 @@ def send_email(data, subject, body):
     from_addr = parseaddr(env("MAIL_FROM", ""))[1]
     msg["Message-ID"] = make_msgid(domain=from_addr.split("@")[-1] if "@" in from_addr else None)
     msg.set_content(body)
+    if html:
+        msg.add_alternative(html, subtype="html")
 
     host = env("SMTP_HOST")
     port = int(env("SMTP_PORT", "587"))
@@ -155,7 +158,8 @@ def contact():
     body = body_for(data, timestamp, category, reason)
 
     try:
-        send_email(data, subject, body)
+        html = html_for(data, subject, timestamp, category, reason, request.remote_addr)
+        send_email(data, subject, body, html)
     except Exception:
         log.exception("Email send failed")
         return jsonify(ok=False, error="email failed"), 502
