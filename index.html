@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Software Matters | Software administration & support</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='170 130 660 740'%3E%3Cpolygon points='195,325 500,500 500,850 195,675' fill='%231E2A36' stroke='%233A4654' stroke-width='10'/%3E%3Cpolygon points='500,500 805,325 805,675 500,850' fill='%233A4E63'/%3E%3Cpolygon points='500,150 805,325 500,500 195,325' fill='%23C7A77B'/%3E%3C/svg%3E">
 <meta name="description" content="Software Matters takes full ownership of your business software: user access, settings, automations, support requests and vendor issues.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,9 +171,9 @@ body.ready .scroll-cue{opacity:1}
 .who-card p{color:var(--muted-d);font-size:17.5px;line-height:1.75;max-width:520px}
 .who-card .deco{position:absolute;right:-40px;bottom:-60px;width:220px;opacity:.07;transition:opacity .5s,transform .8s var(--ease)}
 .who-card:hover .deco{opacity:.14;transform:translateY(-10px) rotate(-4deg)}
-.who-card.partner{background:linear-gradient(160deg,#22303E,#18222D);border-color:rgba(199,167,123,.35)}
-.who-card.partner::before{content:"";position:absolute;left:0;top:0;height:2px;width:0;background:var(--gold);transition:width .7s var(--ease)}
-.who-card.partner:hover::before{width:100%}
+.who-card.featured{background:linear-gradient(160deg,#22303E,#18222D);border-color:rgba(199,167,123,.35)}
+.who-card.featured::before{content:"";position:absolute;left:0;top:0;height:2px;width:0;background:var(--gold);transition:width .7s var(--ease)}
+.who-card.featured:hover::before{width:100%}
 
 
 /* ================= HOW WE WORK ================= */
@@ -572,13 +573,13 @@ body.ready .burger{opacity:1}
       </div>
     </div>
     <div class="who-grid">
-      <article class="who-card rv">
+      <article class="who-card featured rv">
         <span class="label">Clients</span>
         <h3>Businesses of every size</h3>
         <p>From small teams to growing organizations, we work with businesses that rely on software to run their day-to-day operations. Whether you run on one system or twenty, we take it from there.</p>
         <svg class="deco" viewBox="150 120 700 760" aria-hidden="true"><use href="#pLeft" fill="#fff"/><use href="#pRight" fill="#fff" opacity=".6"/><use href="#pTop" fill="#fff" opacity=".85"/></svg>
       </article>
-      <article class="who-card partner rv d1">
+      <article class="who-card rv d1">
         <span class="label">Partnerships</span>
         <h3>IT providers &amp; MSPs</h3>
         <p>Managed service providers who want to offer software administration without building it in-house. We work alongside your team, under your client relationships.</p>

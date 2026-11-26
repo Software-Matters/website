@@ -52,7 +52,7 @@ sudo systemctl restart "$SERVICE"
 
 say "Checking"
 for _ in $(seq 1 15); do
-  code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/ || true)
+  code=$(curl -s -o /dev/null -w '%{http_code}' --unix-socket /run/swmatters/gunicorn.sock http://localhost/ || true)
   [ "$code" = "200" ] && break
   sleep 1
 done

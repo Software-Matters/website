@@ -8,7 +8,10 @@ User=www-data
 Group=www-data
 WorkingDirectory=/var/www/swmatters
 EnvironmentFile=/var/www/swmatters/.env
-ExecStart=/var/www/swmatters/venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 --access-logfile - app:app
+# A private Unix socket instead of a TCP port, so it can never clash with other apps on this server.
+# systemd creates /run/swmatters (owned by www-data) on start; nginx (also www-data) connects to it.
+RuntimeDirectory=swmatters
+ExecStart=/var/www/swmatters/venv/bin/gunicorn --workers 2 --bind unix:/run/swmatters/gunicorn.sock --access-logfile - app:app
 Restart=always
 RestartSec=3
 NoNewPrivileges=true

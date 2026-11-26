@@ -63,7 +63,7 @@ Push to GitHub, then on the VPS run:
 ~/redeploy_swmatters.sh
 ```
 It pulls `master`, installs `requirements.txt` into the venv, reinstalls the systemd unit if
-`deploy/swmatters.service` changed, restarts `swmatters`, and checks the app answers on port 8000
+`deploy/swmatters.service` changed, restarts `swmatters`, and checks the app answers on its socket
 (printing the last 30 log lines if it doesn't). `index.html` changes are live as soon as they're pulled.
 It does not touch nginx (certbot edits that file); it only warns if `deploy/nginx.conf` changed.
 After editing `.env` only: `sudo systemctl restart swmatters`.
@@ -72,6 +72,7 @@ After editing `.env` only: `sudo systemctl restart swmatters`.
 - `SMTP_TLS`: `starttls` (port 587), `ssl` (port 465), or `none` (plain, local testing only).
 - Deliverability: `MAIL_FROM` must be on a domain whose SPF/DKIM authorize your SMTP provider, or mail may land in spam.
 - ClickUp failures are logged but don't fail the visitor; email failures return 502 so the page shows its fallback message.
+- The backend listens on a Unix socket, `/run/swmatters/gunicorn.sock`, not a TCP port, so it can't clash with other apps on the VPS.
 - Rate limit: 5 req/min per IP with a burst of 3 (`limit_req` in `nginx.conf`); excess requests get 429.
 - Lead qualification: each submission is classified by OpenAI `gpt-6-luna` (`OPENAI_API_KEY` in `.env`; override with `OPENAI_MODEL`):
   - **lead**: email + ClickUp task
